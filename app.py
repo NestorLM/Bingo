@@ -1,7 +1,6 @@
 import io
 import Sorteo
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
+import pdfkit
 from flask import Flask, render_template, jsonify, send_file
 from Cartela import generar_carton_bingo
 
@@ -38,44 +37,14 @@ def reset():
 @app.route('/generar_pdf', methods=['POST'])
 def generar_pdf():
     carton = generar_carton_bingo()
-
-    buffer = io.BytesIO()
-    p = canvas.Canvas(buffer, pagesize=letter)
-    width, height = letter
-
-    # Dibujar la tabla del cartón de bingo
-    x_offset = 50
-    y_offset = height - 100
-    cell_width = 100
-    cell_height = 40
-
-    # Título
-    p.setFont("Helvetica-Bold", 24)
-    p.drawString(x_offset, y_offset, "Cartón de Bingo")
+    rendered = render_template('pdf_template.html', carton=carton)
     
-    y_offset -= 50
-
-    # Encabezados de columnas
-    columnas = ['B', 'I', 'N', 'G', 'O']
-    p.setFont("Helvetica-Bold", 12)
-    for i, columna in enumerate(columnas):
-        p.drawString(x_offset + i * cell_width + 30, y_offset, columna)
+    # Especifica la ruta a wkhtmltopdf si no está en tu PATH
+    config = pdfkit.configuration(wkhtmltopdf=r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe')
+    pdf = pdfkit.from_string(rendered, False, configuration=config)
     
-    y_offset -= cell_height
-
-    # Números del cartón
-    p.setFont("Helvetica", 12)
-    for fila in carton:
-        for i, numero in enumerate(fila):
-            p.drawString(x_offset + i * cell_width + 30, y_offset, str(numero))
-        y_offset -= cell_height
-
-    p.showPage()
-    p.save()
-
-    buffer.seek(0)
     return send_file(
-        buffer,
+        io.BytesIO(pdf),
         mimetype='application/pdf',
         as_attachment=True,
         download_name='carton_bingo.pdf'
