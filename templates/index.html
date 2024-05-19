@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bingo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Bingo</h1>
+        <button id="sortear-btn">Sortear número</button>
+        <button id="reset-btn">Resetear</button>
+        <form action="/generar_pdf" method="post" style="display: inline;">
+            <button type="submit">Generar PDF</button>
+        </form>
+        <div id="numeros-sorteados">
+            <table id="bingo-table">
+                <thead>
+                    <tr>
+                        <th>B</th>
+                        <th>I</th>
+                        <th>N</th>
+                        <th>G</th>
+                        <th>O</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for num in range(1, 19) %}
+                        <tr>  
+                            <td id="{{ num }}">{{ num }}</td>
+                            <td id="{{ num + 18 }}">{{ num + 18 }}</td>   
+                            <td id="{{ num + 36 }}">{{ num + 36 }}</td>   
+                            <td id="{{ num + 54 }}">{{ num + 54 }}</td>   
+                            <td id="{{ num + 72 }}">{{ num + 72 }}</td>                          
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div id="fin-mensaje" style="display: none;">¡Fin del sorteo!</div>
+    </div>
+
+    <script>
+        document.getElementById('sortear-btn').addEventListener('click', function() {
+            fetch('/sortear_numero')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.numero === 0 && data.letra === 'a') {
+                        document.getElementById('fin-mensaje').style.display = 'block';
+                        document.getElementById('sortear-btn').disabled = true;
+                    } else {
+                        const cell = document.getElementById(data.numero);
+                        if (cell) {
+                            cell.style.backgroundColor = 'lightgreen';
+                        }
+                    }
+                });
+        });
+
+        document.getElementById('reset-btn').addEventListener('click', function() {
+            fetch('/reset')
+                .then(() => {
+                    const cells = document.querySelectorAll('#bingo-table td');
+                    cells.forEach(cell => {
+                        cell.style.backgroundColor = '';
+                    });
+                    document.getElementById('fin-mensaje').style.display = 'none';
+                    document.getElementById('sortear-btn').disabled = false;
+                });
+        });
+    </script>
+</body>
+</html>
