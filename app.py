@@ -6,6 +6,7 @@ from flask import Flask, render_template, jsonify, send_file, request, url_for
 from Cartela import generar_carton_bingo
 import qrcode
 from reportlab.lib.utils import ImageReader
+import socket
 
 app = Flask(__name__)
 
@@ -14,10 +15,24 @@ numeros_sorteados = set()
 # Definimos el rango de letras
 rangos_letras = {'B': (1, 18), 'I': (19, 36), 'N': (37, 54), 'G': (55, 72), 'O': (73, 90)}
 
+def get_local_ip():
+    """Obtiene la IP local IPv4 de la máquina."""
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        # No importa si no hay internet, solo queremos la IP local
+        s.connect(('8.8.8.8', 80))
+        ip = s.getsockname()[0]
+    except Exception:
+        ip = '127.0.0.1'
+    finally:
+        s.close()
+    return ip
+
 @app.route('/')
 def index():
-    # Construir la URL absoluta para /carton_bingo
-    carton_url = url_for('carton_bingo', _external=True)
+    # Obtener la IP local y construir la URL absoluta para /carton_bingo
+    local_ip = get_local_ip()
+    carton_url = f'http://{local_ip}:5000/carton_bingo'
     # Generar el QR dinámicamente en memoria
     qr_img = qrcode.make(carton_url)
     qr_buffer = io.BytesIO()
@@ -158,5 +173,7 @@ def carton_bingo():
     return render_template('carton_bingo.html', carton=carton)
 #
 if __name__ == '__main__':
+    ip = get_local_ip()
+    print(f"Abre en tu navegador: http://{ip}:5000/")
     app.run(host='0.0.0.0', port=5000, debug=True)
 
