@@ -9,13 +9,17 @@
 <body>
     <div style="display: flex; flex-direction: row; height: 100vh;">
         <!-- Izquierda: Último número grande -->
-        <div id="ultimo-numero" style="flex: 1; display: flex; align-items: center; justify-content: center; background: #f0f0f0;">
-            <span id="numero-grande" style="font-size: 8vw; font-weight: bold; color: #2a2;">--</span>
+        <div style="flex: 1; display: flex; align-items: center; justify-content: center; background: #f0f0f0;">
+            <div id="numero-grande" style="font-size: 8vw; font-weight: bold; color: #2a2;">--</div>
         </div>
-        <!-- Centro: Aquí puedes poner el tablero o controles -->
+        <!-- Centro: Tablero y controles -->
         <div style="flex: 2; padding: 2em;">
             <div class="container">
-                <h1>Bingo</h1>
+                <div style="display: flex; align-items: center; gap: 1em;">
+                    <h1 style="margin-bottom: 0;">Bingo</h1>
+                    <img src="data:image/png;base64,{{ qr_base64 }}" alt="QR Cartón Interactivo" style="width:60px; height:60px;">
+                    <span style="font-size: 0.95em; color: #2a4d69;">Cartón Interactivo</span>
+                </div>
                 <button id="sortear-btn">Sortear número</button>
                 <button id="reset-btn">Resetear</button>
                 <form action="/generar_pdf" method="post" style="display: inline;">
@@ -59,39 +63,7 @@
         </div>
     </div>
     <script>
-        document.getElementById('sortear-btn').addEventListener('click', function() {
-            fetch('/sortear_numero')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.numero === 0 && data.letra === 'a') {
-                        document.getElementById('fin-mensaje').style.display = 'block';
-                        document.getElementById('sortear-btn').disabled = true;
-                    } else {
-                        const cell = document.getElementById(data.numero);
-                        if (cell) {
-                            cell.style.backgroundColor = 'lightgreen';
-                        }
-                        mostrarNumero(data.letra, data.numero);
-                    }
-                });
-        });
-
-        document.getElementById('reset-btn').addEventListener('click', function() {
-            fetch('/reset')
-                .then(() => {
-                    const cells = document.querySelectorAll('#bingo-table td');
-                    cells.forEach(cell => {
-                        cell.style.backgroundColor = '';
-                    });
-                    document.getElementById('fin-mensaje').style.display = 'none';
-                    document.getElementById('sortear-btn').disabled = false;
-                    // Limpiar últimos sorteados
-                    ultimos = [];
-                    document.getElementById('numero-grande').textContent = '--';
-                    document.getElementById('lista-ultimos').innerHTML = '';
-                });
-        });
-
+        // Arreglo para guardar los últimos 5 sorteados
         let ultimos = [];
 
         function mostrarNumero(letra, numero) {
@@ -110,6 +82,43 @@
                 lista.appendChild(div);
             });
         }
+
+        document.getElementById('sortear-btn').addEventListener('click', function() {
+            fetch('/sortear_numero')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.numero === 0 && data.letra === 'a') {
+                        document.getElementById('fin-mensaje').style.display = 'block';
+                        document.getElementById('sortear-btn').disabled = true;
+                    } else {
+                        const cell = document.getElementById(data.numero);
+                        if (cell) {
+                            cell.style.backgroundColor = '#f9d423';
+                            cell.style.color = '#222';
+                            cell.style.fontWeight = 'bold';
+                        }
+                        mostrarNumero(data.letra, data.numero);
+                    }
+                });
+        });
+
+        document.getElementById('reset-btn').addEventListener('click', function() {
+            fetch('/reset')
+                .then(() => {
+                    const cells = document.querySelectorAll('#bingo-table td');
+                    cells.forEach(cell => {
+                        cell.style.backgroundColor = '';
+                        cell.style.color = '';
+                        cell.style.fontWeight = '';
+                    });
+                    document.getElementById('fin-mensaje').style.display = 'none';
+                    document.getElementById('sortear-btn').disabled = false;
+                    // Limpiar últimos sorteados
+                    ultimos = [];
+                    document.getElementById('numero-grande').textContent = '--';
+                    document.getElementById('lista-ultimos').innerHTML = '';
+                });
+        });
     </script>
 </body>
 </html>

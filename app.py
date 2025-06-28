@@ -2,8 +2,10 @@ import io
 import Sorteo
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
-from flask import Flask, render_template, jsonify, send_file, request
+from flask import Flask, render_template, jsonify, send_file, request, url_for
 from Cartela import generar_carton_bingo
+import qrcode
+from reportlab.lib.utils import ImageReader
 
 app = Flask(__name__)
 
@@ -14,7 +16,17 @@ rangos_letras = {'B': (1, 18), 'I': (19, 36), 'N': (37, 54), 'G': (55, 72), 'O':
 
 @app.route('/')
 def index():
-    return render_template('index.html', rangos_letras=rangos_letras)  # Pasamos rangos_letras al contexto del template
+    # Construir la URL absoluta para /carton_bingo
+    carton_url = url_for('carton_bingo', _external=True)
+    # Generar el QR dinámicamente en memoria
+    qr_img = qrcode.make(carton_url)
+    qr_buffer = io.BytesIO()
+    qr_img.save(qr_buffer, format='PNG')
+    qr_buffer.seek(0)
+    qr_data = qr_buffer.getvalue()
+    import base64
+    qr_base64 = base64.b64encode(qr_data).decode('utf-8')
+    return render_template('index.html', rangos_letras=rangos_letras, qr_base64=qr_base64)  # Pasamos rangos_letras al contexto del template
 
 @app.route('/sortear_numero')
 def sortear_numero():
@@ -139,6 +151,11 @@ def generar_pdf():
         as_attachment=True,
         download_name='cartones_bingo.pdf'
     )
+
+@app.route('/carton_bingo')
+def carton_bingo():
+    carton = generar_carton_bingo()
+    return render_template('carton_bingo.html', carton=carton)
 #
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
