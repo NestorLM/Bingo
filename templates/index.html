@@ -7,40 +7,55 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>Bingo</h1>
-        <button id="sortear-btn">Sortear número</button>
-        <button id="reset-btn">Resetear</button>
-        <form action="/generar_pdf" method="post" style="display: inline;">
-            <button type="submit">Generar PDF</button>
-        </form>
-        <div id="numeros-sorteados">
-            <table id="bingo-table">
-                <thead>
-                    <tr>
-                        <th>B</th>
-                        <th>I</th>
-                        <th>N</th>
-                        <th>G</th>
-                        <th>O</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for num in range(1, 19) %}
-                        <tr>  
-                            <td id="{{ num }}">{{ num }}</td>
-                            <td id="{{ num + 18 }}">{{ num + 18 }}</td>   
-                            <td id="{{ num + 36 }}">{{ num + 36 }}</td>   
-                            <td id="{{ num + 54 }}">{{ num + 54 }}</td>   
-                            <td id="{{ num + 72 }}">{{ num + 72 }}</td>                          
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    <div style="display: flex; flex-direction: row; height: 100vh;">
+        <!-- Izquierda: Último número grande -->
+        <div id="ultimo-numero" style="flex: 1; display: flex; align-items: center; justify-content: center; background: #f0f0f0;">
+            <span id="numero-grande" style="font-size: 8vw; font-weight: bold; color: #2a2;">--</span>
         </div>
-        <div id="fin-mensaje" style="display: none;">¡Fin del sorteo!</div>
+        <!-- Centro: Aquí puedes poner el tablero o controles -->
+        <div style="flex: 2; padding: 2em;">
+            <div class="container">
+                <h1>Bingo</h1>
+                <button id="sortear-btn">Sortear número</button>
+                <button id="reset-btn">Resetear</button>
+                <form action="/generar_pdf" method="post" style="display: inline;">
+                    <button type="submit">Generar PDF</button>
+                </form>
+                <div id="numeros-sorteados">
+                    <table id="bingo-table">
+                        <thead>
+                            <tr>
+                                <th>B</th>
+                                <th>I</th>
+                                <th>N</th>
+                                <th>G</th>
+                                <th>O</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for num in range(1, 19) %}
+                                <tr>  
+                                    <td id="{{ num }}">{{ num }}</td>
+                                    <td id="{{ num + 18 }}">{{ num + 18 }}</td>   
+                                    <td id="{{ num + 36 }}">{{ num + 36 }}</td>   
+                                    <td id="{{ num + 54 }}">{{ num + 54 }}</td>   
+                                    <td id="{{ num + 72 }}">{{ num + 72 }}</td>                          
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div id="fin-mensaje" style="display: none;">¡Fin del sorteo!</div>
+            </div>
+        </div>
+        <!-- Derecha: Últimos 5 números grandes -->
+        <div id="ultimos-cinco" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #e0e0e0;">
+            <div style="font-size: 2vw; font-weight: bold; margin-bottom: 1em;">Últimos 5</div>
+            <div id="lista-ultimos" style="display: flex; flex-direction: column; gap: 1em;">
+                <!-- Aquí se llenan los últimos 5 números -->
+            </div>
+        </div>
     </div>
-
     <script>
         document.getElementById('sortear-btn').addEventListener('click', function() {
             fetch('/sortear_numero')
@@ -54,6 +69,7 @@
                         if (cell) {
                             cell.style.backgroundColor = 'lightgreen';
                         }
+                        mostrarNumero(data.letra, data.numero);
                     }
                 });
         });
@@ -67,8 +83,31 @@
                     });
                     document.getElementById('fin-mensaje').style.display = 'none';
                     document.getElementById('sortear-btn').disabled = false;
+                    // Limpiar últimos sorteados
+                    ultimos = [];
+                    document.getElementById('numero-grande').textContent = '--';
+                    document.getElementById('lista-ultimos').innerHTML = '';
                 });
         });
+
+        let ultimos = [];
+
+        function mostrarNumero(letra, numero) {
+            const texto = letra + " " + numero;
+            document.getElementById('numero-grande').textContent = texto;
+            ultimos.unshift(texto);
+            if (ultimos.length > 5) ultimos = ultimos.slice(0, 5);
+            const lista = document.getElementById('lista-ultimos');
+            lista.innerHTML = '';
+            ultimos.forEach(n => {
+                const div = document.createElement('div');
+                div.textContent = n;
+                div.style.fontSize = '4vw';
+                div.style.fontWeight = 'bold';
+                div.style.textAlign = 'center';
+                lista.appendChild(div);
+            });
+        }
     </script>
 </body>
 </html>
