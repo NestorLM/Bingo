@@ -2,7 +2,7 @@ import io
 import Sorteo
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
-from flask import Flask, render_template, jsonify, send_file
+from flask import Flask, render_template, jsonify, send_file, request
 from Cartela import generar_carton_bingo
 
 app = Flask(__name__)
@@ -37,50 +37,109 @@ def reset():
 
 @app.route('/generar_pdf', methods=['POST'])
 def generar_pdf():
-    carton = generar_carton_bingo()
+    try:
+        cantidad_hojas = int(request.form.get('cantidad_hojas', 1))
+    except ValueError:
+        cantidad_hojas = 1
 
     buffer = io.BytesIO()
     p = canvas.Canvas(buffer, pagesize=letter)
     width, height = letter
 
-    # Dibujar la tabla del cartón de bingo
-    x_offset = 50
-    y_offset = height - 100
-    cell_width = 100
-    cell_height = 40
+    for _ in range(cantidad_hojas):
+        cartones = [generar_carton_bingo() for _ in range(4)]
+        for idx, carton in enumerate(cartones):
+            # Márgenes y espacio para 2x2 cartones por hoja
+            margen_x = 30
+            margen_y = 30
+            espacio_x = (width - 2 * margen_x) / 2
+            espacio_y = (height - 2 * margen_y) / 2
+            x0 = margen_x + (idx % 2) * espacio_x
+            y0 = height - margen_y - (idx // 2) * espacio_y
 
-    # Título
-    p.setFont("Helvetica-Bold", 24)
-    p.drawString(x_offset, y_offset, "Cartón de Bingo")
-    
-    y_offset -= 50
+            filas = 5
+            columnas = 5
 
-    # Encabezados de columnas
-    columnas = ['B', 'I', 'N', 'G', 'O']
-    p.setFont("Helvetica-Bold", 12)
-    for i, columna in enumerate(columnas):
-        p.drawString(x_offset + i * cell_width + 30, y_offset, columna)
-    
-    y_offset -= cell_height
+            # Celdas cuadradas: el lado es el menor entre ancho y alto disponible para la tabla
+            lado_celda = min((espacio_x - 30) / columnas, (espacio_y - 60) / filas)
+            tabla_ancho = lado_celda * columnas
+            tabla_alto = lado_celda * filas
 
-    # Números del cartón
-    p.setFont("Helvetica", 12)
-    for fila in carton:
-        for i, numero in enumerate(fila):
-            p.drawString(x_offset + i * cell_width + 30, y_offset, str(numero))
-        y_offset -= cell_height
+            # Centrar la tabla dentro del espacio del cartón
+            tabla_x = x0 + (espacio_x - tabla_ancho) / 2
+            tabla_y = y0 - 35  # Espacio para el título y encabezados
 
-    p.showPage()
+            # Título
+            p.setFont("Helvetica-Bold", 13)
+            p.drawCentredString(x0 + espacio_x/2, y0 - 15, "Cartón de Bingo")
+
+            # Encabezados de columnas
+            columnas_letras = ['B', 'I', 'N', 'G', 'O']
+            p.setFont("Helvetica-Bold", 12)
+            for i, letra in enumerate(columnas_letras):
+                p.drawCentredString(
+                    tabla_x + i * lado_celda + lado_celda/2,
+                    tabla_y,
+                    letra
+                )
+
+            # Paleta de colores pastel
+            colores = [
+                (0.85, 0.93, 0.98),  # celeste claro
+                (0.93, 0.98, 0.85),  # verde claro
+                (0.98, 0.93, 0.85),  # naranja claro
+                (0.96, 0.85, 0.98),  # lila claro
+                (0.98, 0.98, 0.85),  # amarillo claro
+            ]
+
+            # Dibujar celdas cuadradas con color de fondo alternado
+            p.setLineWidth(1)
+            for fila in range(filas):
+                for col in range(columnas):
+                    x1 = tabla_x + col * lado_celda
+                    y1 = tabla_y - 10 - fila * lado_celda
+                    color = colores[col % len(colores)]
+                    p.setFillColorRGB(*color)
+                    p.rect(x1, y1 - lado_celda, lado_celda, lado_celda, fill=1, stroke=0)
+                    # Borde de celda
+                    p.setStrokeColorRGB(0.7, 0.7, 0.7)
+                    p.rect(x1, y1 - lado_celda, lado_celda, lado_celda, fill=0, stroke=1)
+
+            # Borde exterior más grueso y oscuro
+            p.setLineWidth(2)
+            p.setStrokeColorRGB(0.2, 0.4, 0.7)
+            p.rect(tabla_x, tabla_y - 10 - filas * lado_celda, lado_celda * columnas, lado_celda * filas, fill=0, stroke=1)
+
+            # Números del cartón
+            p.setFont("Helvetica-Bold", 13)
+            for fila in range(filas):
+                for col in range(columnas):
+                    numero = carton[fila][col]
+                    # Texto oscuro con leve sombra blanca para contraste
+                    p.setFillColorRGB(1, 1, 1)
+                    p.drawCentredString(
+                        tabla_x + col * lado_celda + lado_celda/2 + 0.7,
+                        tabla_y - 10 - fila * lado_celda - lado_celda/2 + 4 - 0.7,
+                        str(numero)
+                    )
+                    p.setFillColorRGB(0.15, 0.2, 0.3)
+                    p.drawCentredString(
+                        tabla_x + col * lado_celda + lado_celda/2,
+                        tabla_y - 10 - fila * lado_celda - lado_celda/2 + 4,
+                        str(numero)
+                    )
+
+        p.showPage()
+
     p.save()
-
     buffer.seek(0)
     return send_file(
         buffer,
         mimetype='application/pdf',
         as_attachment=True,
-        download_name='carton_bingo.pdf'
+        download_name='cartones_bingo.pdf'
     )
-
+#
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
 

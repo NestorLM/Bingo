@@ -19,6 +19,8 @@
                 <button id="sortear-btn">Sortear número</button>
                 <button id="reset-btn">Resetear</button>
                 <form action="/generar_pdf" method="post" style="display: inline;">
+                    <label for="cantidad_hojas">Cantidad de hojas:</label>
+                    <input type="number" id="cantidad_hojas" name="cantidad_hojas" min="1" value="1" style="width: 60px;">
                     <button type="submit">Generar PDF</button>
                 </form>
                 <div id="numeros-sorteados">
