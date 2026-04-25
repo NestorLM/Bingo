@@ -41,7 +41,7 @@ body {
     border: 1px solid var(--border);
     border-radius: 16px;
     box-shadow: 0 10px 24px rgba(16, 24, 40, 0.08);
-    padding: 16px;
+    padding: 12px;
 }
 
 .hero,
@@ -79,7 +79,7 @@ body {
     justify-content: space-between;
     align-items: center;
     gap: 12px;
-    margin-bottom: 14px;
+    margin-bottom: 8px;
 }
 
 h1 {
@@ -107,7 +107,7 @@ h1 {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    margin-bottom: 14px;
+    margin-bottom: 8px;
 }
 
 .btn {
@@ -161,7 +161,7 @@ h1 {
     flex-wrap: wrap;
     align-items: center;
     gap: 8px;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
 }
 
 .pdf-form input {
@@ -180,9 +180,10 @@ h1 {
 }
 
 .table-wrap {
-    margin-top: 10px;
-    max-height: none;
-    overflow: visible;
+    margin-top: 6px;
+    max-height: none !important;
+    overflow: hidden !important;
+    height: auto !important;
     border: 1px solid var(--border);
     border-radius: 12px;
 }
@@ -193,9 +194,7 @@ table {
 }
 
 thead th {
-    position: sticky;
-    top: 0;
-    z-index: 1;
+    position: static;
     background: #0f3d7a;
     color: #fff;
 }
@@ -204,8 +203,9 @@ th,
 td {
     border: 1px solid var(--border);
     text-align: center;
-    padding: 8px;
-    font-size: 0.9rem;
+    padding: 6px;
+    font-size: 0.84rem;
+    line-height: 1.15;
 }
 
 td {
@@ -238,6 +238,8 @@ td.selected {
     .layout {
         grid-template-columns: 1fr;
         width: min(1000px, 98%);
+        margin: 8px auto;
+        gap: 8px;
     }
 
     .hero,
@@ -256,7 +258,11 @@ td.selected {
 
     th,
     td {
-        padding: 7px;
-        font-size: 0.86rem;
+        padding: 5px;
+        font-size: 0.8rem;
+    }
+
+    .card {
+        padding: 10px;
     }
 }
