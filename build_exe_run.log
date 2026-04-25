@@ -1,0 +1,106 @@
+======================================
+  Bingo - Compilacion de Ejecutable
+======================================
+[1/4] Verificando Python...
+[2/4] Instalando dependencias del proyecto...
+Requirement already satisfied: Flask in C:\Users\nesto\AppData\Local\Programs\Python\Python313\Lib\site-packages (from -r requiments.txt (line 1)) (3.1.1)
+Requirement already satisfied: reportlab in C:\Users\nesto\AppData\Local\Programs\Python\Python313\Lib\site-packages (from -r requiments.txt (line 2)) (4.4.2)
+Requirement already satisfied: qrcode in C:\Users\nesto\AppData\Local\Programs\Python\Python313\Lib\site-packages (from -r requiments.txt (line 3)) (8.2)
+Requirement already satisfied: pillow in C:\Users\nesto\AppData\Local\Programs\Python\Python313\Lib\site-packages (from -r requiments.txt (line 4)) (11.2.1)
+Requirement already satisfied: blinker>=1.9.0 in C:\Users\nesto\AppData\Local\Programs\Python\Python313\Lib\site-packages (from Flask->-r requiments.txt (line 1)) (1.9.0)
+Requirement already satisfied: click>=8.1.3 in C:\Users\nesto\AppData\Local\Programs\Python\Python313\Lib\site-packages (from Flask->-r requiments.txt (line 1)) (8.2.1)
+Requirement already satisfied: itsdangerous>=2.2.0 in C:\Users\nesto\AppData\Local\Programs\Python\Python313\Lib\site-packages (from Flask->-r requiments.txt (line 1)) (2.2.0)
+Requirement already satisfied: jinja2>=3.1.2 in C:\Users\nesto\AppData\Local\Programs\Python\Python313\Lib\site-packages (from Flask->-r requiments.txt (line 1)) (3.1.6)
+Requirement already satisfied: markupsafe>=2.1.1 in C:\Users\nesto\AppData\Local\Programs\Python\Python313\Lib\site-packages (from Flask->-r requiments.txt (line 1)) (3.0.2)
+Requirement already satisfied: werkzeug>=3.1.0 in C:\Users\nesto\AppData\Local\Programs\Python\Python313\Lib\site-packages (from Flask->-r requiments.txt (line 1)) (3.1.3)
+Requirement already satisfied: charset-normalizer in C:\Users\nesto\AppData\Local\Programs\Python\Python313\Lib\site-packages (from reportlab->-r requiments.txt (line 2)) (3.4.2)
+Requirement already satisfied: colorama in C:\Users\nesto\AppData\Local\Programs\Python\Python313\Lib\site-packages (from qrcode->-r requiments.txt (line 3)) (0.4.6)
+[3/4] Instalando/actualizando PyInstaller...
+Requirement already satisfied: pyinstaller in C:\Users\nesto\AppData\Local\Programs\Python\Python313\Lib\site-packages (6.20.0)
+Requirement already satisfied: altgraph in C:\Users\nesto\AppData\Local\Programs\Python\Python313\Lib\site-packages (from pyinstaller) (0.17.4)
+Requirement already satisfied: packaging>=22.0 in C:\Users\nesto\AppData\Local\Programs\Python\Python313\Lib\site-packages (from pyinstaller) (25.0)
+Requirement already satisfied: pefile>=2022.5.30 in C:\Users\nesto\AppData\Local\Programs\Python\Python313\Lib\site-packages (from pyinstaller) (2023.2.7)
+Requirement already satisfied: pyinstaller-hooks-contrib>=2026.4 in C:\Users\nesto\AppData\Local\Programs\Python\Python313\Lib\site-packages (from pyinstaller) (2026.4)
+Requirement already satisfied: pywin32-ctypes>=0.2.1 in C:\Users\nesto\AppData\Local\Programs\Python\Python313\Lib\site-packages (from pyinstaller) (0.2.3)
+Requirement already satisfied: setuptools>=42.0.0 in C:\Users\nesto\AppData\Local\Programs\Python\Python313\Lib\site-packages (from pyinstaller) (80.9.0)
+[4/4] Generando launcher.exe...
+102 INFO: PyInstaller: 6.20.0, contrib hooks: 2026.4
+102 INFO: Python: 3.13.13
+118 INFO: Platform: Windows-11-10.0.26200-SP0
+119 INFO: Python environment: C:\Users\nesto\AppData\Local\Programs\Python\Python313
+119 INFO: wrote C:\Users\nesto\AppData\Local\Temp\bingo_pyinstaller_build\launcher.spec
+127 INFO: Module search paths (PYTHONPATH):
+['C:\\Users\\nesto\\OneDrive\\Documents\\GitHub\\Bingo',
+ 'C:\\Users\\nesto\\AppData\\Local\\Programs\\Python\\Python313\\python313.zip',
+ 'C:\\Users\\nesto\\AppData\\Local\\Programs\\Python\\Python313\\DLLs',
+ 'C:\\Users\\nesto\\AppData\\Local\\Programs\\Python\\Python313\\Lib',
+ 'C:\\Users\\nesto\\AppData\\Local\\Programs\\Python\\Python313',
+ 'C:\\Users\\nesto\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages',
+ 'C:\\Users\\nesto\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\win32',
+ 'C:\\Users\\nesto\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\win32\\lib',
+ 'C:\\Users\\nesto\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\Pythonwin',
+ 'C:\\Users\\nesto\\OneDrive\\Documents\\GitHub\\Bingo']
+C:\Users\nesto\AppData\Local\Programs\Python\Python313\Lib\site-packages\pygame\pkgdata.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  from pkg_resources import resource_stream, resource_exists
+pygame 2.6.1 (SDL 2.28.4, Python 3.13.13)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+1482 INFO: checking Analysis
+1483 INFO: Building Analysis because Analysis-00.toc is non existent
+1483 INFO: Looking for Python shared library...
+1483 INFO: Using Python shared library: C:\Users\nesto\AppData\Local\Programs\Python\Python313\python313.dll
+1483 INFO: Running Analysis Analysis-00.toc
+1483 INFO: Target bytecode optimization level: 0
+1483 INFO: Initializing module dependency graph...
+1484 INFO: Initializing module graph hook caches...
+1516 INFO: Analyzing modules for base_library.zip ...
+2563 INFO: Processing standard module hook 'hook-encodings.py' from 'C:\\Users\\nesto\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\PyInstaller\\hooks'
+4292 INFO: Processing standard module hook 'hook-pickle.py' from 'C:\\Users\\nesto\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\PyInstaller\\hooks'
+5201 INFO: Processing standard module hook 'hook-heapq.py' from 'C:\\Users\\nesto\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\PyInstaller\\hooks'
+6170 INFO: Caching module dependency graph...
+6197 INFO: Analyzing C:\Users\nesto\OneDrive\Documents\GitHub\Bingo\launcher.py
+6260 INFO: Processing standard module hook 'hook-multiprocessing.util.py' from 'C:\\Users\\nesto\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\PyInstaller\\hooks'
+6458 INFO: Processing standard module hook 'hook-xml.py' from 'C:\\Users\\nesto\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\PyInstaller\\hooks'
+6801 INFO: Processing standard module hook 'hook-sysconfig.py' from 'C:\\Users\\nesto\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\PyInstaller\\hooks'
+6811 INFO: Processing standard module hook 'hook-_ctypes.py' from 'C:\\Users\\nesto\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\PyInstaller\\hooks'
+6946 INFO: Processing pre-find-module-path hook 'hook-tkinter.py' from 'C:\\Users\\nesto\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\PyInstaller\\hooks\\pre_find_module_path'
+6947 INFO: TclTkInfo: initializing cached Tcl/Tk info...
+7169 INFO: Processing standard module hook 'hook-_tkinter.py' from 'C:\\Users\\nesto\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\PyInstaller\\hooks'
+7180 INFO: Processing module hooks (post-graph stage)...
+7442 INFO: Processing standard module hook 'hook-_tkinter.py' from 'C:\\Users\\nesto\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\PyInstaller\\hooks'
+7449 INFO: Performing binary vs. data reclassification (927 entries)
+11100 INFO: Looking for ctypes DLLs
+11108 INFO: Analyzing run-time hooks ...
+11109 INFO: Including run-time hook 'pyi_rth_inspect.py' from 'C:\\Users\\nesto\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+11119 INFO: Including run-time hook 'pyi_rth__tkinter.py' from 'C:\\Users\\nesto\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+11125 INFO: Including run-time hook 'pyi_rth_multiprocessing.py' from 'C:\\Users\\nesto\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+11133 INFO: Including run-time hook 'pyi_rth_pkgutil.py' from 'C:\\Users\\nesto\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+11159 INFO: Creating base_library.zip...
+11177 INFO: Looking for dynamic libraries
+11292 INFO: Extra DLL search directories (AddDllDirectory): []
+11293 INFO: Extra DLL search directories (PATH): []
+11474 INFO: Warnings written to C:\Users\nesto\AppData\Local\Temp\bingo_pyinstaller_build\launcher\warn-launcher.txt
+11485 INFO: Graph cross-reference written to C:\Users\nesto\AppData\Local\Temp\bingo_pyinstaller_build\launcher\xref-launcher.html
+11530 INFO: checking PYZ
+11530 INFO: Building PYZ because PYZ-00.toc is non existent
+11530 INFO: Building PYZ (ZlibArchive) C:\Users\nesto\AppData\Local\Temp\bingo_pyinstaller_build\launcher\PYZ-00.pyz
+11667 INFO: Building PYZ (ZlibArchive) C:\Users\nesto\AppData\Local\Temp\bingo_pyinstaller_build\launcher\PYZ-00.pyz completed successfully.
+11679 INFO: checking PKG
+11679 INFO: Building PKG because PKG-00.toc is non existent
+11679 INFO: Building PKG (CArchive) launcher.pkg
+13608 INFO: Building PKG (CArchive) launcher.pkg completed successfully.
+13619 INFO: Bootloader C:\Users\nesto\AppData\Local\Programs\Python\Python313\Lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\runw.exe
+13619 INFO: checking EXE
+13619 INFO: Building EXE because EXE-00.toc is non existent
+13619 INFO: Building EXE from EXE-00.toc
+13619 INFO: Copying bootloader EXE to C:\Users\nesto\AppData\Local\Temp\bingo_pyinstaller_dist\launcher.exe
+13674 INFO: Copying icon to EXE
+13710 INFO: Copying 0 resources to EXE
+13710 INFO: Embedding manifest in EXE
+13742 INFO: Appending PKG archive to EXE
+13839 INFO: Fixing EXE headers
+14387 INFO: Building EXE from EXE-00.toc completed successfully.
+14397 INFO: Build complete! The results are available in: C:\Users\nesto\AppData\Local\Temp\bingo_pyinstaller_dist
+El proceso no tiene acceso al archivo porque est  siendo utilizado por otro proceso.
+ERROR: No se pudo copiar launcher.exe a dist\
+
+Proceso finalizado con errores.

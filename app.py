@@ -1,4 +1,5 @@
 import io
+import os
 import Sorteo
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
@@ -11,9 +12,39 @@ import socket
 app = Flask(__name__)
 
 numeros_sorteados = set()
+SERVER_PORT = 8080
 
 # Definimos el rango de letras
 rangos_letras = {'B': (1, 18), 'I': (19, 36), 'N': (37, 54), 'G': (55, 72), 'O': (73, 90)}
+
+
+def is_port_free(port):
+    """Verifica si un puerto local esta disponible para escuchar."""
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        return sock.connect_ex(("127.0.0.1", port)) != 0
+
+
+def resolve_server_port():
+    """Obtiene un puerto configurable y cae en una lista de puertos comunes."""
+    env_port = os.getenv("BINGO_PORT")
+    if env_port and env_port.isdigit():
+        forced_port = int(env_port)
+        if 1 <= forced_port <= 65535:
+            return forced_port
+
+    candidate_ports = []
+
+    candidate_ports.extend([8080, 5000, 8000, 8888])
+
+    for port in candidate_ports:
+        if 1 <= port <= 65535 and is_port_free(port):
+            return port
+
+    # Si todos estan ocupados, el SO asigna uno libre automaticamente.
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as temp:
+        temp.bind(("", 0))
+        return temp.getsockname()[1]
 
 def get_local_ip():
     """Obtiene la IP local IPv4 de la máquina."""
@@ -30,9 +61,8 @@ def get_local_ip():
 
 @app.route('/')
 def index():
-    # Obtener la IP local y construir la URL absoluta para /carton_bingo
     local_ip = get_local_ip()
-    carton_url = f'http://{local_ip}:5000/carton_bingo'
+    carton_url = f'http://{local_ip}:{SERVER_PORT}/carton_bingo'
     # Generar el QR dinámicamente en memoria
     qr_img = qrcode.make(carton_url)
     qr_buffer = io.BytesIO()
@@ -54,13 +84,15 @@ def sortear_numero():
         if numero not in numeros_sorteados:
             numeros_sorteados.add(numero)
             break  # Salir del bucle una vez que se ha encontrado un número único
+    if len(numeros_sorteados) == 90 and numero == 0:
+        return jsonify({'letra': '', 'numero': 0, 'fin': True})
     return jsonify({'letra': letra, 'numero': numero})
 
 @app.route('/reset')
 def reset():
     global numeros_sorteados
     numeros_sorteados = set()
-    return 'Reset realizado'
+    return jsonify({'ok': True})
 
 @app.route('/generar_pdf', methods=['POST'])
 def generar_pdf():
@@ -171,9 +203,20 @@ def generar_pdf():
 def carton_bingo():
     carton = generar_carton_bingo()
     return render_template('carton_bingo.html', carton=carton)
-#
-if __name__ == '__main__':
+
+
+def start_bingo_server(port=None):
+    global SERVER_PORT
+    if port is not None and 1 <= int(port) <= 65535:
+        SERVER_PORT = int(port)
+    else:
+        SERVER_PORT = resolve_server_port()
+
     ip = get_local_ip()
-    print(f"Abre en tu navegador: http://{ip}:5000/")
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    print(f"Abre en tu navegador: http://{ip}:{SERVER_PORT}/")
+    app.run(host='0.0.0.0', port=SERVER_PORT, debug=False, use_reloader=False)
+
+
+if __name__ == '__main__':
+    start_bingo_server()
 

@@ -1,122 +1,126 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bingo</title>
+    <title>Bingo - Panel Principal</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div style="display: flex; flex-direction: row; height: 100vh;">
-        <!-- Izquierda: Último número grande -->
-        <div style="flex: 1; display: flex; align-items: center; justify-content: center; background: #f0f0f0;">
-            <div id="numero-grande" style="font-size: 8vw; font-weight: bold; color: #2a2;">--</div>
-        </div>
-        <!-- Centro: Tablero y controles -->
-        <div style="flex: 2; padding: 2em;">
-            <div class="container">
-                <div style="display: flex; align-items: center; gap: 1em;">
-                    <h1 style="margin-bottom: 0;">Bingo</h1>
-                    <img src="data:image/png;base64,{{ qr_base64 }}" alt="QR Cartón Interactivo" style="width:60px; height:60px;">
-                    <span style="font-size: 0.95em; color: #2a4d69;">Cartón Interactivo</span>
+    <main class="layout">
+        <section class="hero card">
+            <p class="label">Numero actual</p>
+            <div id="numero-grande" class="numero-grande">--</div>
+            <p class="sub">Sortea y sigue el ritmo del juego en tiempo real.</p>
+        </section>
+
+        <section class="control card">
+            <div class="header-row">
+                <div>
+                    <h1>Bingo</h1>
+                    <p class="sub">Panel de control para el anfitrion.</p>
                 </div>
-                <button id="sortear-btn">Sortear número</button>
-                <button id="reset-btn">Resetear</button>
-                <form action="/generar_pdf" method="post" style="display: inline;">
-                    <label for="cantidad_hojas">Cantidad de hojas:</label>
-                    <input type="number" id="cantidad_hojas" name="cantidad_hojas" min="1" value="1" style="width: 60px;">
-                    <button type="submit">Generar PDF</button>
-                </form>
-                <div id="numeros-sorteados">
-                    <table id="bingo-table">
-                        <thead>
+                <div class="qr-wrap">
+                    <img src="data:image/png;base64,{{ qr_base64 }}" alt="QR para abrir carton interactivo" class="qr-image">
+                    <span>Abrir carton</span>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button id="sortear-btn" class="btn btn-primary">Sortear numero</button>
+                <button id="reset-btn" class="btn btn-secondary">Reiniciar ronda</button>
+            </div>
+
+            <form action="/generar_pdf" method="post" class="pdf-form">
+                <label for="cantidad_hojas">Hojas PDF</label>
+                <input type="number" id="cantidad_hojas" name="cantidad_hojas" min="1" value="1">
+                <button type="submit" class="btn btn-accent">Generar cartones</button>
+            </form>
+
+            <div id="fin-mensaje" class="fin">Todos los numeros fueron sorteados.</div>
+
+            <div id="numeros-sorteados" class="table-wrap">
+                <table id="bingo-table">
+                    <thead>
+                        <tr>
+                            <th>B</th>
+                            <th>I</th>
+                            <th>N</th>
+                            <th>G</th>
+                            <th>O</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for num in range(1, 19) %}
                             <tr>
-                                <th>B</th>
-                                <th>I</th>
-                                <th>N</th>
-                                <th>G</th>
-                                <th>O</th>
+                                <td id="{{ num }}">{{ num }}</td>
+                                <td id="{{ num + 18 }}">{{ num + 18 }}</td>
+                                <td id="{{ num + 36 }}">{{ num + 36 }}</td>
+                                <td id="{{ num + 54 }}">{{ num + 54 }}</td>
+                                <td id="{{ num + 72 }}">{{ num + 72 }}</td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            {% for num in range(1, 19) %}
-                                <tr>  
-                                    <td id="{{ num }}">{{ num }}</td>
-                                    <td id="{{ num + 18 }}">{{ num + 18 }}</td>   
-                                    <td id="{{ num + 36 }}">{{ num + 36 }}</td>   
-                                    <td id="{{ num + 54 }}">{{ num + 54 }}</td>   
-                                    <td id="{{ num + 72 }}">{{ num + 72 }}</td>                          
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <div id="fin-mensaje" style="display: none;">¡Fin del sorteo!</div>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-        </div>
-        <!-- Derecha: Últimos 5 números grandes -->
-        <div id="ultimos-cinco" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #e0e0e0;">
-            <div style="font-size: 2vw; font-weight: bold; margin-bottom: 1em;">Últimos 5</div>
-            <div id="lista-ultimos" style="display: flex; flex-direction: column; gap: 1em;">
-                <!-- Aquí se llenan los últimos 5 números -->
-            </div>
-        </div>
-    </div>
+        </section>
+
+        <aside class="history card">
+            <p class="label">Ultimos 5</p>
+            <div id="lista-ultimos" class="hist-list"></div>
+        </aside>
+    </main>
+
     <script>
-        // Arreglo para guardar los últimos 5 sorteados
         let ultimos = [];
 
         function mostrarNumero(letra, numero) {
             const texto = letra + " " + numero;
-            document.getElementById('numero-grande').textContent = texto;
+            document.getElementById("numero-grande").textContent = texto;
             ultimos.unshift(texto);
-            if (ultimos.length > 5) ultimos = ultimos.slice(0, 5);
-            const lista = document.getElementById('lista-ultimos');
-            lista.innerHTML = '';
-            ultimos.forEach(n => {
-                const div = document.createElement('div');
+            if (ultimos.length > 5) {
+                ultimos = ultimos.slice(0, 5);
+            }
+            const lista = document.getElementById("lista-ultimos");
+            lista.innerHTML = "";
+            ultimos.forEach((n) => {
+                const div = document.createElement("div");
+                div.className = "hist-item";
                 div.textContent = n;
-                div.style.fontSize = '4vw';
-                div.style.fontWeight = 'bold';
-                div.style.textAlign = 'center';
                 lista.appendChild(div);
             });
         }
 
-        document.getElementById('sortear-btn').addEventListener('click', function() {
-            fetch('/sortear_numero')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.numero === 0 && data.letra === 'a') {
-                        document.getElementById('fin-mensaje').style.display = 'block';
-                        document.getElementById('sortear-btn').disabled = true;
-                    } else {
-                        const cell = document.getElementById(data.numero);
-                        if (cell) {
-                            cell.style.backgroundColor = '#f9d423';
-                            cell.style.color = '#222';
-                            cell.style.fontWeight = 'bold';
-                        }
-                        mostrarNumero(data.letra, data.numero);
+        document.getElementById("sortear-btn").addEventListener("click", function () {
+            fetch("/sortear_numero")
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.fin || data.numero === 0) {
+                        document.getElementById("fin-mensaje").style.display = "block";
+                        document.getElementById("sortear-btn").disabled = true;
+                        return;
                     }
+
+                    const cell = document.getElementById(data.numero);
+                    if (cell) {
+                        cell.classList.add("selected");
+                    }
+                    mostrarNumero(data.letra, data.numero);
                 });
         });
 
-        document.getElementById('reset-btn').addEventListener('click', function() {
-            fetch('/reset')
+        document.getElementById("reset-btn").addEventListener("click", function () {
+            fetch("/reset")
                 .then(() => {
-                    const cells = document.querySelectorAll('#bingo-table td');
-                    cells.forEach(cell => {
-                        cell.style.backgroundColor = '';
-                        cell.style.color = '';
-                        cell.style.fontWeight = '';
+                    const cells = document.querySelectorAll("#bingo-table td");
+                    cells.forEach((cell) => {
+                        cell.classList.remove("selected");
                     });
-                    document.getElementById('fin-mensaje').style.display = 'none';
-                    document.getElementById('sortear-btn').disabled = false;
-                    // Limpiar últimos sorteados
+                    document.getElementById("fin-mensaje").style.display = "none";
+                    document.getElementById("sortear-btn").disabled = false;
                     ultimos = [];
-                    document.getElementById('numero-grande').textContent = '--';
-                    document.getElementById('lista-ultimos').innerHTML = '';
+                    document.getElementById("numero-grande").textContent = "--";
+                    document.getElementById("lista-ultimos").innerHTML = "";
                 });
         });
     </script>
