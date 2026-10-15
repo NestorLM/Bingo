@@ -3,92 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <title>Cartón de Bingo Interactivo</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        :root {
+            --header-bg: #0f3d7a;
+            --border: #b0c4de;
+            --highlight: #f9d423;
+            --bg: #f6fafd;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            background: #f6fafd;
+            background: var(--bg);
             font-family: 'Segoe UI', Arial, sans-serif;
-            margin: 0;
-            padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: clamp(8px, 2vw, 20px);
         }
+
         h1 {
-            margin-top: 1em;
-            color: #2a4d69;
+            color: var(--header-bg);
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            margin-bottom: clamp(8px, 2vw, 16px);
+            text-align: center;
         }
+
         .bingo-board {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 6px;
-            max-width: 95vw;
-            width: 400px;
-            margin: 2em auto;
+            gap: clamp(3px, 0.8vw, 8px);
+            width: min(95vw, 450px);
             background: #e3eaf2;
-            border-radius: 12px;
-            box-shadow: 0 2px 12px #0001;
-            padding: 12px;
+            border-radius: 14px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: clamp(6px, 1.5vw, 14px);
         }
-        .bingo-cell, .bingo-header {
+
+        .bingo-header {
             aspect-ratio: 1/1;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: clamp(1.2rem, 4vw, 2.2rem);
-            border-radius: 8px;
-            user-select: none;
-            transition: background 0.2s, color 0.2s;
-        }
-        .bingo-header {
-            background: #2a4d69;
-            color: #fff;
+            font-size: clamp(1rem, 3.5vw, 2rem);
             font-weight: bold;
             letter-spacing: 2px;
+            border-radius: 8px;
+            background: var(--header-bg);
+            color: #fff;
+            user-select: none;
         }
+
         .bingo-cell {
+            aspect-ratio: 1/1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(0.9rem, 3vw, 1.8rem);
+            font-weight: 600;
+            border-radius: 8px;
             background: #fff;
-            color: #2a4d69;
-            border: 2px solid #b0c4de;
+            color: var(--header-bg);
+            border: 2px solid var(--border);
             cursor: pointer;
+            user-select: none;
+            transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
         }
+
+        .bingo-cell:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        }
+
         .bingo-cell.marked {
-            background: #f9d423;
+            background: var(--highlight);
             color: #222;
-            border-color: #f9d423;
+            border-color: var(--highlight);
             font-weight: bold;
-            box-shadow: 0 0 0 2px #f9d42355;
+            box-shadow: 0 0 0 2px #f9d42366;
         }
-        @media (max-width: 600px) {
-            .bingo-board {
-                width: 98vw;
-                padding: 4vw;
-            }
+
+        .footer-info {
+            margin-top: clamp(10px, 2vw, 20px);
+            font-size: clamp(0.6rem, 1.2vw, 0.85rem);
+            color: #5f6b7a;
+            text-align: center;
+        }
+
+        @media (max-width: 400px) {
+            .bingo-board { width: 99vw; gap: 2px; padding: 4px; border-radius: 10px; }
+            .bingo-cell { font-size: 0.85rem; border-width: 1px; }
+            .bingo-header { font-size: 0.9rem; }
         }
     </style>
 </head>
 <body>
-    <h1>Cartón de Bingo Interactivo</h1>
-    <div class="bingo-board" id="bingo-board">
-        <!-- Generado por JS -->
-    </div>
+    <h1>Cartón de Bingo</h1>
+    <div class="bingo-board" id="bingo-board"></div>
+    <p class="footer-info">Toca un número para marcarlo • B(1-18) I(19-36) N(37-54) G(55-72) O(73-90)</p>
+
     <script>
+        const RANGOS_LETRAS = {
+            'B': [1, 18], 'I': [19, 36], 'N': [37, 54],
+            'G': [55, 72], 'O': [73, 90]
+        };
         const LETRAS_ORDEN = ['B', 'I', 'N', 'G', 'O'];
 
         function generarCartonBingo() {
             const carton = [];
             for (const letra of LETRAS_ORDEN) {
-                let min, max;
-                switch(letra) {
-                    case 'B': min = 1; max = 18; break;
-                    case 'I': min = 19; max = 36; break;
-                    case 'N': min = 37; max = 54; break;
-                    case 'G': min = 55; max = 72; break;
-                    case 'O': min = 73; max = 90; break;
-                }
-                const disponibles = [];
-                for (let i = min; i <= max; i++) disponibles.push(i);
-                // Mezclar
+                const [min, max] = RANGOS_LETRAS[letra];
+                const disponibles = Array.from({length: max - min + 1}, (_, i) => min + i);
                 for (let i = disponibles.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
                     [disponibles[i], disponibles[j]] = [disponibles[j], disponibles[i]];

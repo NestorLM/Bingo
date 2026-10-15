@@ -17,15 +17,14 @@
             --secondary: #6b7280;
             --secondary-dark: #4b5563;
             --accent: #16a34a;
-            --accent-dark: #127a38;
             --highlight: #ffe58f;
             --border: #d7e3ef;
+            --header-bg: #0f3d7a;
         }
 
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            margin: 0;
             font-family: "Segoe UI", "Helvetica Neue", sans-serif;
             color: var(--ink);
             background:
@@ -35,47 +34,56 @@
             min-height: 100vh;
         }
 
+        /* ====== Layout principal ====== */
         .layout {
-            width: min(1280px, 96%);
-            margin: 20px auto;
+            width: 100%;
+            margin: 0 auto;
             display: grid;
-            grid-template-columns: 1fr 2fr 1fr;
-            gap: 16px;
+            grid-template-columns: 1fr;
+            gap: 0;
         }
 
+        /* ====== Cards ====== */
         .card {
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: 16px;
             box-shadow: 0 10px 24px rgba(16, 24, 40, 0.08);
-            padding: 12px;
-        }
-
-        .hero, .history {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 420px;
+            padding: clamp(8px, 1.5vw, 16px);
         }
 
         .label {
-            margin: 0;
+            margin: 0 0 4px;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            font-size: 0.75rem;
+            font-size: clamp(0.6rem, 1.2vw, 0.75rem);
             color: var(--muted);
         }
 
+        .sub { margin: 0; color: var(--muted); font-size: clamp(0.75rem, 1.3vw, 0.9rem); }
+
+        /* ====== Hero (número actual) ====== */
+        .hero-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: clamp(16px, 3vw, 32px) 8px;
+            text-align: center;
+        }
+
         .numero-grande {
-            margin: 12px 0;
-            font-size: clamp(3rem, 8vw, 6rem);
+            font-size: clamp(3rem, 10vw, 7rem);
             line-height: 1;
             font-weight: 700;
             color: #0f172a;
+            margin: 8px 0;
         }
 
-        .sub { margin: 0; color: var(--muted); }
+        /* ====== Panel de control ====== */
+        .control-section {
+            padding: clamp(8px, 1.5vw, 16px);
+        }
 
         .header-row {
             display: flex;
@@ -83,167 +91,211 @@
             align-items: center;
             gap: 12px;
             margin-bottom: 8px;
+            flex-wrap: wrap;
         }
 
-        h1 { margin: 0; font-size: clamp(1.5rem, 2.2vw, 2.1rem); }
-
-        .qr-wrap {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.85rem;
-            color: var(--muted);
-        }
-
-        .qr-image {
-            width: 78px;
-            height: 78px;
-            border-radius: 10px;
-            border: 1px solid var(--border);
+        h1 {
+            font-size: clamp(1.3rem, 2.5vw, 2.1rem);
+            color: var(--header-bg);
         }
 
         .actions {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
             margin-bottom: 8px;
         }
 
         .btn {
             border: none;
             border-radius: 12px;
-            padding: 10px 14px;
-            font-size: 0.95rem;
+            padding: clamp(8px, 1.2vw, 12px) clamp(14px, 2vw, 20px);
+            font-size: clamp(0.85rem, 1.5vw, 1rem);
             font-weight: 600;
             color: #fff;
             cursor: pointer;
             transition: transform 0.18s ease, filter 0.18s ease;
+            white-space: nowrap;
         }
 
-        .btn:hover {
-            transform: translateY(-1px);
-            filter: brightness(1.05);
-        }
-
-        .btn:disabled {
-            opacity: 0.55;
-            cursor: not-allowed;
-            transform: none;
-        }
-
+        .btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
+        .btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
         .btn-primary { background: var(--primary); }
-        .btn-primary:hover { background: var(--primary-dark); }
         .btn-secondary { background: var(--secondary); }
-        .btn-secondary:hover { background: var(--secondary-dark); }
-        .btn-accent { background: var(--accent); }
-        .btn-accent:hover { background: var(--accent-dark); }
 
-        .pdf-form {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 6px;
-        }
-
-        .pdf-form input {
-            width: 80px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 8px;
-            font-size: 0.95rem;
-        }
-
-        .fin {
+        #fin-mensaje {
             display: none;
             color: #b91c1c;
             font-weight: 600;
             margin: 8px 0;
+            text-align: center;
+            font-size: clamp(0.85rem, 1.5vw, 1rem);
         }
 
+        .qr-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            font-size: clamp(0.6rem, 1.1vw, 0.8rem);
+            color: var(--muted);
+        }
+
+        .qr-wrap > span { text-align: center; white-space: nowrap; }
+
+        /* ====== Tabla de números - SIEMPRE visible ====== */
         .table-wrap {
-            margin-top: 6px;
-            max-height: none !important;
-            overflow: hidden !important;
-            height: auto !important;
+            width: 100%;
+            overflow: visible;
             border: 1px solid var(--border);
             border-radius: 12px;
+            background: #fff;
         }
 
         table { width: 100%; border-collapse: collapse; }
 
         thead th {
-            position: static;
-            background: #0f3d7a;
+            background: var(--header-bg);
             color: #fff;
+            padding: clamp(4px, 0.8vw, 8px);
+            font-size: clamp(0.7rem, 1.3vw, 0.95rem);
+            text-align: center;
         }
 
         th, td {
             border: 1px solid var(--border);
             text-align: center;
-            padding: 6px;
-            font-size: 0.84rem;
-            line-height: 1.15;
+            padding: clamp(3px, 0.5vw, 6px);
+            font-size: clamp(0.6rem, 1.1vw, 0.88rem);
+            line-height: 1.2;
         }
 
-        td { background: #fbfdff; }
-
+        td { background: #fbfdff; transition: background 0.3s; }
         td.selected {
-            background: var(--highlight);
+            background: var(--highlight) !important;
             font-weight: 700;
+            color: #0f172a;
+        }
+
+        /* ====== Historial (últimos 5) ====== */
+        .history-section {
+            padding: clamp(8px, 1.5vw, 16px);
         }
 
         .hist-list {
-            width: 100%;
-            display: grid;
-            gap: 10px;
+            display: flex;
+            flex-direction: row;
+            gap: 6px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .hist-item {
-            width: 100%;
-            padding: 12px;
+            padding: clamp(8px, 1.2vw, 14px) clamp(12px, 1.8vw, 20px);
             border-radius: 12px;
             background: #edf4ff;
             border: 1px solid #d6e6ff;
             text-align: center;
-            font-size: clamp(1.1rem, 2.8vw, 1.8rem);
+            font-size: clamp(1rem, 2vw, 1.5rem);
             font-weight: 700;
+            min-width: clamp(50px, 8vw, 80px);
         }
 
-        @media (max-width: 1100px) {
+        .hist-item:first-child {
+            background: var(--highlight);
+            border-color: #f0c040;
+        }
+
+        /* ====== Footer info ====== */
+        .footer-info {
+            text-align: center;
+            padding: 8px;
+            font-size: clamp(0.65rem, 1vw, 0.8rem);
+            color: var(--muted);
+        }
+
+        /* ====== Modo escritorio (3 columnas) ====== */
+        @media (min-width: 1101px) {
             .layout {
-                grid-template-columns: 1fr;
-                width: min(1000px, 98%);
-                margin: 8px auto;
-                gap: 8px;
+                grid-template-columns: 280px 1fr 200px;
+                max-width: 1400px;
+                margin: 16px auto;
+                gap: 16px;
             }
 
-            .hero, .history { min-height: 210px; }
+            .hero-section { min-height: 500px; }
+            .history-section { min-height: 500px; justify-content: center; }
+
+            .hist-list {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .hist-item {
+                width: 100%;
+                padding: 14px;
+                font-size: clamp(1.2rem, 2vw, 1.8rem);
+            }
+        }
+
+        /* ====== Tablet (2 columnas) ====== */
+        @media (min-width: 769px) and (max-width: 1100px) {
+            .layout {
+                grid-template-columns: 1fr 1fr;
+                max-width: 1000px;
+                margin: 12px auto;
+                gap: 12px;
+                padding: 0 8px;
+            }
+
+            .history-section {
+                grid-column: 1 / -1;
+                min-height: auto;
+            }
+
+            .hist-list { flex-direction: row; }
+
+            .hero-section { min-height: 250px; }
+        }
+
+        /* ====== Móvil ====== */
+        @media (max-width: 768px) {
+            .layout { padding: 4px; }
+
+            .card { border-radius: 12px; }
+
+            .hero-section { min-height: 180px; padding: 12px 8px; }
 
             .header-row { flex-direction: column; align-items: flex-start; }
-            .qr-wrap { align-items: flex-start; }
 
-            th, td { padding: 5px; font-size: 0.8rem; }
-            .card { padding: 10px; }
+            .actions { justify-content: center; width: 100%; }
+            .btn { flex: 1; text-align: center; min-width: 0; }
+
+            .hist-list { gap: 4px; }
+            .hist-item { padding: 6px 10px; font-size: 0.95rem; min-width: 45px; }
+        }
+
+        @media (max-width: 380px) {
+            .numero-grande { font-size: 2.8rem; }
+            .hist-item { font-size: 0.85rem; padding: 5px 8px; min-width: 40px; }
         }
     </style>
 </head>
 <body>
     <main class="layout">
-        <!-- Hero: Número actual -->
-        <section class="hero card">
+        <!-- Izquierda / Arriba: Número actual -->
+        <section class="hero-section card hero-card">
             <p class="label">Número actual</p>
             <div id="numero-grande" class="numero-grande">--</div>
-            <p class="sub">Sortea y sigue el ritmo del juego en tiempo real.</p>
+            <p class="sub">Sortea y sigue el ritmo del juego.</p>
         </section>
 
-        <!-- Panel de control -->
-        <section class="control card">
+        <!-- Centro / Medio: Panel de control -->
+        <section class="control-section card">
             <div class="header-row">
                 <div>
                     <h1>Bingo</h1>
-                    <p class="sub">Panel de control para el anfitrión.</p>
+                    <p class="sub">Panel de control del anfitrión.</p>
                 </div>
                 <div class="qr-wrap">
                     <div id="qr-code"></div>
@@ -256,15 +308,10 @@
                 <button id="reset-btn" class="btn btn-secondary">Reiniciar ronda</button>
             </div>
 
-            <form id="pdf-form" class="pdf-form">
-                <label for="cantidad_hojas">Hojas PDF</label>
-                <input type="number" id="cantidad_hojas" name="cantidad_hojas" min="1" value="1">
-                <button type="submit" class="btn btn-accent">Generar cartones</button>
-            </form>
-
             <div id="fin-mensaje" class="fin">Todos los números fueron sorteados.</div>
 
-            <div id="numeros-sorteados" class="table-wrap">
+            <!-- Tabla de todos los números SIEMPRE visible -->
+            <div class="table-wrap">
                 <table id="bingo-table">
                     <thead>
                         <tr>
@@ -282,16 +329,18 @@
             </div>
         </section>
 
-        <!-- Historial: Últimos 5 -->
-        <aside class="history card">
+        <!-- Derecha / Abajo: Historial últimos 5 -->
+        <aside class="history-section card">
             <p class="label">Últimos 5</p>
             <div id="lista-ultimos" class="hist-list"></div>
         </aside>
     </main>
 
+    <p class="footer-info">Bingo • 90 números • B(1-18) I(19-36) N(37-54) G(55-72) O(73-90)</p>
+
     <script>
         // ============================================================
-        // Configuración de rangos del Bingo (B-I-N-G-O: 1-90)
+        // Configuración de rangos del Bingo
         // ============================================================
         const RANGOS_LETRAS = {
             'B': [1, 18],
@@ -311,17 +360,14 @@
         let ultimoNumero = null;
 
         // ============================================================
-        // Generar cartón de Bingo (equivalente a Cartela.py)
+        // Generar cartón de Bingo
         // ============================================================
         function generarCartonBingo() {
             const carton = [];
-            const seleccionadosPorCol = {};
-
             for (const letra of LETRAS_ORDEN) {
                 const [inicio, fin] = RANGOS_LETRAS[letra];
                 const disponibles = [];
                 for (let i = inicio; i <= fin; i++) disponibles.push(i);
-                // Mezclar y tomar 5
                 for (let i = disponibles.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
                     [disponibles[i], disponibles[j]] = [disponibles[j], disponibles[i]];
@@ -329,7 +375,7 @@
                 carton.push(disponibles.slice(0, 5));
             }
 
-            // Transponer: carton[fila][col] -> carton[col][fila]
+            // Transponer: carton[col][fila] -> carton[fila][col]
             const transpuesto = [];
             for (let fila = 0; fila < 5; fila++) {
                 transpuesto.push([]);
@@ -337,12 +383,11 @@
                     transpuesto[fila].push(carton[col][fila]);
                 }
             }
-
             return transpuesto;
         }
 
         // ============================================================
-        // Sortear número (equivalente a Sorteo.py)
+        // Sortear número
         // ============================================================
         function sortearNumero() {
             if (numerosSorteados.size >= 90) {
@@ -352,7 +397,6 @@
             let numero = 0;
             let letra = '';
 
-            // Intentar hasta encontrar uno no sortado
             for (let intento = 0; intento < 1000; intento++) {
                 const letraRandom = LETRAS_ORDEN[Math.floor(Math.random() * LETRAS_ORDEN.length)];
                 const [min, max] = RANGOS_LETRAS[letraRandom];
@@ -384,7 +428,6 @@
             document.getElementById('numero-grande').textContent = '--';
             document.getElementById('lista-ultimos').innerHTML = '';
 
-            // Limpiar tabla
             document.querySelectorAll('#bingo-table td').forEach(td => {
                 td.classList.remove('selected');
             });
@@ -411,7 +454,7 @@
         }
 
         // ============================================================
-        // Construir tabla de números
+        // Construir tabla de números (SIEMPRE visible)
         // ============================================================
         function construirTabla() {
             const tbody = document.getElementById('bingo-tbody');
@@ -435,7 +478,6 @@
         // ============================================================
         function generarQR() {
             const qrContainer = document.getElementById('qr-code');
-            // Obtener la URL base del documento actual
             const baseUrl = window.location.href.split('/').slice(0, -1).join('/') + '/carton_bingo.html';
             new QRCode(qrContainer, {
                 text: baseUrl,
@@ -448,169 +490,13 @@
         }
 
         // ============================================================
-        // Generar PDF con jsPDF (equivalente a generar_pdf de Flask)
-        // ============================================================
-        function generarPDF(cantidadHojas) {
-            console.log('generarPDF llamado con:', cantidadHojas);
-            // Cargar jsPDF dinámicamente si no está
-            if (typeof jspdf === 'undefined') {
-                console.log('jsPDF no cargado, cargando desde CDN...');
-                const script = document.createElement('script');
-                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-                script.onload = () => {
-                    console.log('jsPDF cargado, generando PDF...');
-                    generarPDFIntern(cantidadHojas);
-                };
-                script.onerror = () => {
-                    alert('No se pudo cargar la librería jsPDF. Verifica tu conexión a internet.');
-                    console.error('Error al cargar jsPDF');
-                };
-                document.head.appendChild(script);
-            } else {
-                console.log('jsPDF ya disponible, generando PDF...');
-                generarPDFIntern(cantidadHojas);
-            }
-        }
-
-        function generarPDFIntern(cantidadHojas) {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-            const pageW = 210;
-            const pageH = 297;
-            const margen = 10;
-            const espacioEntre = 8;
-
-            // Grid 2x2 de cartones
-            const cartonesPorFila = 2;
-            const anchoDisponible = pageW - 2 * margen;
-            const altoDisponible = pageH - 2 * margen;
-
-            // Cada carton ocupa la mitad del ancho (con espacio entre ellos)
-            const cartonAncho = (anchoDisponible - espacioEntre) / cartonesPorFila;
-            // Queremos celdas cuadradas: 6.2 celdas de ancho = header + 5 columnas
-            let ladoCelda = cartonAncho / 6.0;
-
-            // Alto total del cartón: header(1.1 celdas) + 5 filas de numeros(5 celdas) + padding(0.8 celdas)
-            const cartonAlto = ladoCelda * (1.1 + 5 + 0.8);
-
-            // Verificar que quepan verticalmente
-            const espacioVerticalNecesario = 2 * cartonAlto + espacioEntre;
-            let cartonAnchoFinal = cartonAncho;
-            if (espacioVerticalNecesario > altoDisponible) {
-                // Si no caben, reducir ladoCelda proporcionalmente
-                const factor = altoDisponible / espacioVerticalNecesario;
-                ladoCelda *= factor;
-                // Recalcular ancho del cartón despues de ajuste
-                cartonAnchoFinal = ladoCelda * 6.0;
-            }
-
-            const cartonAltoAjustado = ladoCelda * (1.1 + 5 + 0.8);
-
-            // Colores
-            const colorHeader = { r: 42, g: 77, b: 105 };   // #2a4d69 azul oscuro
-            const colorFondoCarton = { r: 230, g: 240, b: 248 }; // #e3f0f8 suave
-            const colorBorde = { r: 176, g: 196, b: 222 };       // #b0c4de
-            const colorTextoHeader = { r: 255, g: 255, b: 255 };
-            const colorTextoNumero = { r: 42, g: 77, b: 105 };   // azul oscuro
-
-            for (let hoja = 0; hoja < cantidadHojas; hoja++) {
-                if (hoja > 0) doc.addPage();
-
-                for (let idx = 0; idx < 4; idx++) {
-                    const carton = generarCartonBingo();
-                    const filaGrid = Math.floor(idx / cartonesPorFila);
-                    const colGrid = idx % cartonesPorFila;
-
-                    // Posicion superior-izquierda del cartón (centrado en su cuadrante)
-                    const x0 = margen + colGrid * (cartonAnchoFinal + espacioEntre) - espacioEntre / 2;
-                    const y0 = margen + filaGrid * (cartonAltoAjustado + espacioEntre) - espacioEntre / 2;
-
-                    // --- Fondo del cartón con bordes redondeados ---
-                    doc.setFillColor(colorFondoCarton.r, colorFondoCarton.g, colorFondoCarton.b);
-                    doc.roundedRect(x0, y0, cartonAnchoFinal, cartonAltoAjustado, 8, 8, 'F');
-
-                    // Borde exterior redondeado
-                    doc.setDrawColor(colorBorde.r, colorBorde.g, colorBorde.b);
-                    doc.setLineWidth(1.0);
-                    doc.roundedRect(x0, y0, cartonAnchoFinal, cartonAltoAjustado, 8, 8, 'S');
-
-                    // --- Encabezados B I N G O (filas oscuras con letras blancas) ---
-                    const headerAlto = ladoCelda * 1.1;
-                    for (let i = 0; i < 5; i++) {
-                        const cx = x0 + i * ladoCelda;
-
-                        // Fondo oscuro del header con bordes redondeados (solo el superior)
-                        doc.setFillColor(colorHeader.r, colorHeader.g, colorHeader.b);
-                        doc.roundedRect(cx + 0.5, y0 + 0.5, ladoCelda - 1, headerAlto - 1, 4, 4, 'F');
-
-                        // Letra centrada vertical y horizontalmente
-                        const letraY = y0 + headerAlto / 2 + 2;
-                        doc.setFont('helvetica', 'bold');
-                        doc.setFontSize(16);
-                        doc.setTextColor(colorTextoHeader.r, colorTextoHeader.g, colorTextoHeader.b);
-                        doc.text(LETRAS_ORDEN[i], cx + ladoCelda / 2, letraY, { align: 'center' });
-                    }
-
-                    // --- Filas de números (celdas blancas con borde) ---
-                    const numStartY = y0 + headerAlto;
-                    for (let fila = 0; fila < 5; fila++) {
-                        for (let col = 0; col < 5; col++) {
-                            // Centro EXACTO de la celda
-                            const cx = x0 + col * ladoCelda + ladoCelda / 2;
-                            const cy = numStartY + fila * ladoCelda + ladoCelda / 2;
-
-                            // Fondo blanco de la celda con bordes redondeados
-                            doc.setFillColor(255, 255, 255);
-                            doc.roundedRect(
-                                x0 + col * ladoCelda + 1.0,
-                                numStartY + fila * ladoCelda + 1.0,
-                                ladoCelda - 2.0,
-                                ladoCelda - 2.0,
-                                4, 4, 'F'
-                            );
-
-                            // Borde de la celda
-                            doc.setDrawColor(colorBorde.r, colorBorde.g, colorBorde.b);
-                            doc.setLineWidth(0.4);
-                            doc.roundedRect(
-                                x0 + col * ladoCelda + 1.0,
-                                numStartY + fila * ladoCelda + 1.0,
-                                ladoCelda - 2.0,
-                                ladoCelda - 2.0,
-                                4, 4, 'S'
-                            );
-
-                            // Número centrado perfectamente en la celda
-                            doc.setFont('helvetica', 'bold');
-                            doc.setFontSize(17);
-                            doc.setTextColor(colorTextoNumero.r, colorTextoNumero.g, colorTextoNumero.b);
-                            doc.text(String(carton[fila][col]), cx, cy + 1.5, { align: 'center' });
-                        }
-                    }
-
-                    // --- ID del cartón (pequeño, abajo) ---
-                    const decoY = y0 + cartonAltoAjustado - 3;
-                    doc.setFont('helvetica', 'normal');
-                    doc.setFontSize(6);
-                    doc.setTextColor(170, 180, 200);
-                    const numCarton = String(Math.floor(Math.random() * 900000) + 100000).substring(0, 6);
-                    doc.text(`ID: ${numCarton}`, x0 + cartonAnchoFinal / 2, decoY, { align: 'center' });
-                }
-            }
-
-            doc.save('cartones_bingo.pdf');
-        }
-
-        // ============================================================
         // Inicialización
         // ============================================================
         document.addEventListener('DOMContentLoaded', () => {
             construirTabla();
             generarQR();
 
-            // Botón sortear
             document.getElementById('sortear-btn').addEventListener('click', () => {
-                console.log('Botón sortear clickeado');
                 const resultado = sortearNumero();
 
                 if (resultado.fin || resultado.numero === 0) {
@@ -619,28 +505,13 @@
                     return;
                 }
 
-                // Marcar en la tabla
                 const cell = document.getElementById('num-' + resultado.numero);
                 if (cell) cell.classList.add('selected');
 
                 mostrarNumero(resultado.letra, resultado.numero);
             });
 
-            // Botón reset
             document.getElementById('reset-btn').addEventListener('click', resetJuego);
-
-            // Formulario PDF
-            document.getElementById('pdf-form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const cantidad = parseInt(document.getElementById('cantidad_hojas').value) || 1;
-                console.log('Submit del formulario, cantidad:', cantidad);
-                try {
-                    generarPDF(Math.max(1, cantidad));
-                } catch (err) {
-                    console.error('Error en generarPDF:', err);
-                    alert('Error al generar PDF: ' + err.message);
-                }
-            });
         });
     </script>
 </body>
