@@ -512,17 +512,17 @@
                     const colGrid = idx % cartonesPorFila;
 
                     // Posicion superior-izquierda del cartón (centrado en su cuadrante)
-                    const x0 = margen + colGrid * (cartonAncho + espacioEntre) - espacioEntre / 2;
+                    const x0 = margen + colGrid * (cartonAnchoAjustado + espacioEntre) - espacioEntre / 2;
                     const y0 = margen + filaGrid * (cartonAltoAjustado + espacioEntre) - espacioEntre / 2;
 
                     // --- Fondo del cartón con bordes redondeados ---
                     doc.setFillColor(colorFondoCarton.r, colorFondoCarton.g, colorFondoCarton.b);
-                    doc.roundedRect(x0, y0, cartonAncho, cartonAltoAjustado, 8, 8, 'F');
+                    doc.roundedRect(x0, y0, cartonAnchoAjustado, cartonAltoAjustado, 8, 8, 'F');
 
                     // Borde exterior redondeado
                     doc.setDrawColor(colorBorde.r, colorBorde.g, colorBorde.b);
                     doc.setLineWidth(1.0);
-                    doc.roundedRect(x0, y0, cartonAncho, cartonAltoAjustado, 8, 8, 'S');
+                    doc.roundedRect(x0, y0, cartonAnchoAjustado, cartonAltoAjustado, 8, 8, 'S');
 
                     // --- Encabezados B I N G O (filas oscuras con letras blancas) ---
                     const headerAlto = ladoCelda * 1.1;
@@ -545,8 +545,9 @@
                     const numStartY = y0 + headerAlto;
                     for (let fila = 0; fila < 5; fila++) {
                         for (let col = 0; col < 5; col++) {
+                            // Centro EXACTO de la celda
                             const cx = x0 + col * ladoCelda + ladoCelda / 2;
-                            const cy = numStartY + fila * ladoCelda + ladoCelda * 0.47;
+                            const cy = numStartY + fila * ladoCelda + ladoCelda / 2;
 
                             // Fondo blanco de la celda con bordes redondeados
                             doc.setFillColor(255, 255, 255);
@@ -569,11 +570,11 @@
                                 4, 4, 'S'
                             );
 
-                            // Número centrado perfectamente
+                            // Número centrado perfectamente en la celda
                             doc.setFont('helvetica', 'bold');
                             doc.setFontSize(17);
                             doc.setTextColor(colorTextoNumero.r, colorTextoNumero.g, colorTextoNumero.b);
-                            doc.text(String(carton[fila][col]), cx, cy, { align: 'center' });
+                            doc.text(String(carton[fila][col]), cx, cy + 1.5, { align: 'center' });
                         }
                     }
 
@@ -583,7 +584,7 @@
                     doc.setFontSize(6);
                     doc.setTextColor(170, 180, 200);
                     const numCarton = String(Math.floor(Math.random() * 900000) + 100000).substring(0, 6);
-                    doc.text(`ID: ${numCarton}`, x0 + cartonAncho / 2, decoY, { align: 'center' });
+                    doc.text(`ID: ${numCarton}`, x0 + cartonAnchoAjustado / 2, decoY, { align: 'center' });
                 }
             }
 
