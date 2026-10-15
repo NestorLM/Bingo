@@ -451,14 +451,23 @@
         // Generar PDF con jsPDF (equivalente a generar_pdf de Flask)
         // ============================================================
         function generarPDF(cantidadHojas) {
+            console.log('generarPDF llamado con:', cantidadHojas);
             // Cargar jsPDF dinámicamente si no está
             if (typeof jspdf === 'undefined') {
+                console.log('jsPDF no cargado, cargando desde CDN...');
                 const script = document.createElement('script');
                 script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+                script.onload = () => {
+                    console.log('jsPDF cargado, generando PDF...');
+                    generarPDFIntern(cantidadHojas);
+                };
+                script.onerror = () => {
+                    alert('No se pudo cargar la librería jsPDF. Verifica tu conexión a internet.');
+                    console.error('Error al cargar jsPDF');
+                };
                 document.head.appendChild(script);
-
-                script.onload = () => generarPDFIntern(cantidadHojas);
             } else {
+                console.log('jsPDF ya disponible, generando PDF...');
                 generarPDFIntern(cantidadHojas);
             }
         }
