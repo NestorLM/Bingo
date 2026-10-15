@@ -609,6 +609,7 @@
 
             // Botón sortear
             document.getElementById('sortear-btn').addEventListener('click', () => {
+                console.log('Botón sortear clickeado');
                 const resultado = sortearNumero();
 
                 if (resultado.fin || resultado.numero === 0) {
@@ -631,7 +632,13 @@
             document.getElementById('pdf-form').addEventListener('submit', (e) => {
                 e.preventDefault();
                 const cantidad = parseInt(document.getElementById('cantidad_hojas').value) || 1;
-                generarPDF(Math.max(1, cantidad));
+                console.log('Submit del formulario, cantidad:', cantidad);
+                try {
+                    generarPDF(Math.max(1, cantidad));
+                } catch (err) {
+                    console.error('Error en generarPDF:', err);
+                    alert('Error al generar PDF: ' + err.message);
+                }
             });
         });
     </script>
