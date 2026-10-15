@@ -7,60 +7,31 @@ Aplicacion de Bingo con interfaz web para anfitrion, carton interactivo para jug
 - Panel principal con numero actual grande, historial de ultimos sorteos y tablero B-I-N-G-O.
 - Carton interactivo para marcar numeros desde celular o PC.
 - Generacion de PDF listo para imprimir (4 cartones por hoja).
-- Lanzador de escritorio con botones para iniciar y detener servidor.
-- Seleccion de puerto automatica y configurable.
+- 100% frontend: HTML, CSS y JavaScript sin necesidad de Python ni servidor.
 
-## Requisitos
+## Como ejecutar
 
-- Python 3.10 o superior.
-- Dependencias del proyecto (archivo actual: requiments.txt).
+Simplemente abre `index.html` en tu navegador (doble click). No se requiere instalacion ni servidor.
 
-Instalacion:
+### Opcional: servir con Python
 
-```bash
-pip install -r requiments.txt
-```
-
-## Ejecutar en modo desarrollo
+Si querés acceder desde otros dispositivos en tu red:
 
 ```bash
-python launcher.py
+python -m http.server 8080
 ```
 
-El launcher abre automaticamente el navegador en la URL local.
+Luego abri `http://TU_IP:8080/index.html` desde el otro dispositivo.
 
-## Puerto del servidor
+## Archivos
 
-La aplicacion intenta usar estos puertos en orden:
+- **index.html** — Panel principal del anfitrion (sorteo, tablero, QR, generacion de PDF).
+- **carton_bingo.html** — Carton interactivo para jugadores (marcar numeros).
 
-1. Puerto definido en la variable de entorno BINGO_PORT.
-2. 8080
-3. 5000
-4. 8000
-5. 8888
-6. Si todos estan ocupados, toma uno libre automaticamente.
+## Dependencias
 
-Ejemplo para forzar puerto:
+Todas se cargan desde CDN (no requiere instalacion):
 
-```bash
-set BINGO_PORT=8080
-python launcher.py
-```
-
-## Compilar ejecutable (.exe)
-
-Usa el script build_exe.bat:
-
-```bat
-build_exe.bat
-```
-
-El ejecutable se genera en:
-
-- dist\\launcher.exe
-
-## Acceso desde otros dispositivos
-
-- Conecta ambos equipos a la misma red local.
-- Permite el puerto elegido en el firewall de Windows si es necesario.
-- Escanea el QR del panel principal para abrir el carton interactivo.
+- Tailwind CSS (estilos)
+- QRCode.js (generacion de QR)
+- jsPDF (generacion de PDF)
