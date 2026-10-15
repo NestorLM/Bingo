@@ -487,22 +487,23 @@
 
             // Cada carton ocupa la mitad del ancho (con espacio entre ellos)
             const cartonAncho = (anchoDisponible - espacioEntre) / cartonesPorFila;
-            // El alto del cartón se define por la cantidad de celdas que cabe
             // Queremos celdas cuadradas: 6.2 celdas de ancho = header + 5 columnas
-            const ladoCelda = cartonAncho / 6.0;
+            let ladoCelda = cartonAncho / 6.0;
 
             // Alto total del cartón: header(1.1 celdas) + 5 filas de numeros(5 celdas) + padding(0.8 celdas)
             const cartonAlto = ladoCelda * (1.1 + 5 + 0.8);
 
             // Verificar que quepan verticalmente
             const espacioVerticalNecesario = 2 * cartonAlto + espacioEntre;
+            let cartonAnchoFinal = cartonAncho;
             if (espacioVerticalNecesario > altoDisponible) {
                 // Si no caben, reducir ladoCelda proporcionalmente
                 const factor = altoDisponible / espacioVerticalNecesario;
                 ladoCelda *= factor;
+                // Recalcular ancho del cartón despues de ajuste
+                cartonAnchoFinal = ladoCelda * 6.0;
             }
 
-            // Recalcular alto del cartón despues de ajuste
             const cartonAltoAjustado = ladoCelda * (1.1 + 5 + 0.8);
 
             // Colores
@@ -521,17 +522,17 @@
                     const colGrid = idx % cartonesPorFila;
 
                     // Posicion superior-izquierda del cartón (centrado en su cuadrante)
-                    const x0 = margen + colGrid * (cartonAnchoAjustado + espacioEntre) - espacioEntre / 2;
+                    const x0 = margen + colGrid * (cartonAnchoFinal + espacioEntre) - espacioEntre / 2;
                     const y0 = margen + filaGrid * (cartonAltoAjustado + espacioEntre) - espacioEntre / 2;
 
                     // --- Fondo del cartón con bordes redondeados ---
                     doc.setFillColor(colorFondoCarton.r, colorFondoCarton.g, colorFondoCarton.b);
-                    doc.roundedRect(x0, y0, cartonAnchoAjustado, cartonAltoAjustado, 8, 8, 'F');
+                    doc.roundedRect(x0, y0, cartonAnchoFinal, cartonAltoAjustado, 8, 8, 'F');
 
                     // Borde exterior redondeado
                     doc.setDrawColor(colorBorde.r, colorBorde.g, colorBorde.b);
                     doc.setLineWidth(1.0);
-                    doc.roundedRect(x0, y0, cartonAnchoAjustado, cartonAltoAjustado, 8, 8, 'S');
+                    doc.roundedRect(x0, y0, cartonAnchoFinal, cartonAltoAjustado, 8, 8, 'S');
 
                     // --- Encabezados B I N G O (filas oscuras con letras blancas) ---
                     const headerAlto = ladoCelda * 1.1;
@@ -593,7 +594,7 @@
                     doc.setFontSize(6);
                     doc.setTextColor(170, 180, 200);
                     const numCarton = String(Math.floor(Math.random() * 900000) + 100000).substring(0, 6);
-                    doc.text(`ID: ${numCarton}`, x0 + cartonAnchoAjustado / 2, decoY, { align: 'center' });
+                    doc.text(`ID: ${numCarton}`, x0 + cartonAnchoFinal / 2, decoY, { align: 'center' });
                 }
             }
 
