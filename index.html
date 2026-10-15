@@ -470,35 +470,31 @@
             const pageH = 297;
             const margen = 12;
 
-            // Grid 2x2: 2 filas x 2 columnas de cartones
-            const anchoDisponible = pageW - 2 * margen;
-            const altoPagina = pageH - 2 * margen;
-            const espacioEntre = 6;
+            // Grid 2x2 de cartones
             const cartonesPorFila = 2;
-
-            // Dimensiones del cartón (incluye titulo + header + 5 filas de numeros)
-            const ladoCelda = Math.min(anchoDisponible / (cartonesPorFila * 6.5), altoPagina / (3.5 * cartonesPorFila));
-            const cartonAncho = ladoCelda * 6.5;
-            const cartonAlto = ladoCelda * 7.5;
+            const espacioEntre = 6;
+            const anchoDisponible = pageW - 2 * margen;
+            const altoDisponible = pageH - 2 * margen;
+            const cartonAncho = (anchoDisponible - espacioEntre) / cartonesPorFila;
+            const cartonAlto = cartonAncho * 1.35; // proporcion titulo+header+5filas
             const pasoX = (anchoDisponible - cartonAncho) / (cartonesPorFila - 1);
-            const pasoY = (altoPagina - cartonAlto) / (cartonesPorFila - 1);
+            const pasoY = (altoDisponible - cartonAlto) / (cartonesPorFila - 1);
 
-            // Colores pastel para columnas (B, I, N, G, O)
-            const coloresCol = [
-                [173, 216, 230],  // celeste claro
-                [144, 238, 144],  // verde claro
-                [255, 228, 196],  // melocoton
-                [216, 191, 216],  // lila
-                [255, 255, 153]   // amarillo suave
-            ];
+            // Calculo de celda cuadrada dentro del cartón
+            // Header ocupa ~15% alto, cada fila numerica ~17%
+            const ladoCelda = cartonAncho / 6.2;
+            const headerAlto = ladoCelda * 1.05;
 
-            // Color del encabezado
-            const colorHeader = { r: 15, g: 61, b: 122 };
+            // Colores
+            const colorHeader = { r: 42, g: 77, b: 105 };   // azul oscuro #2a4d69
+            const colorFondoCarton = { r: 230, g: 240, b: 248 }; // #e3f8f8 suave
+            const colorBorde = { r: 176, g: 196, b: 222 };       // #b0c4de
+            const colorTextoHeader = { r: 255, g: 255, b: 255 };
+            const colorTextoNumero = { r: 42, g: 77, b: 105 };   // azul oscuro
 
             for (let hoja = 0; hoja < cantidadHojas; hoja++) {
                 if (hoja > 0) doc.addPage();
 
-                // 4 cartones por hoja en disposicion 2x2
                 for (let idx = 0; idx < 4; idx++) {
                     const carton = generarCartonBingo();
                     const filaGrid = Math.floor(idx / cartonesPorFila);
@@ -508,69 +504,73 @@
                     const x0 = margen + colGrid * (cartonAncho + pasoX) - pasoX / 2;
                     const y0 = margen + filaGrid * (cartonAlto + pasoY) - pasoY / 2;
 
-                    // --- Fondo del cartón ---
-                    doc.setFillColor(245, 248, 255);
-                    doc.roundedRect(x0 - 2, y0 - 2, cartonAncho + 4, cartonAlto + 4, 4, 4, 'F');
+                    // --- Fondo del cartón con bordes redondeados ---
+                    doc.setFillColor(colorFondoCarton.r, colorFondoCarton.g, colorFondoCarton.b);
+                    doc.roundedRect(x0, y0, cartonAncho, cartonAlto, 6, 6, 'F');
 
                     // Borde exterior redondeado
-                    doc.setDrawColor(colorHeader.r, colorHeader.g, colorHeader.b);
-                    doc.setLineWidth(1.5);
-                    doc.roundedRect(x0 - 2, y0 - 2, cartonAncho + 4, cartonAlto + 4, 4, 4, 'S');
+                    doc.setDrawColor(colorBorde.r, colorBorde.g, colorBorde.b);
+                    doc.setLineWidth(0.8);
+                    doc.roundedRect(x0, y0, cartonAncho, cartonAlto, 6, 6, 'S');
 
-                    // --- Título "CARTÓN DE BINGO" ---
-                    const tituloY = y0 + ladoCelda * 1.15;
-                    doc.setFont('helvetica', 'bold');
-                    doc.setFontSize(12);
-                    doc.setTextColor(colorHeader.r, colorHeader.g, colorHeader.b);
-                    doc.text('CARTÓN DE BINGO', x0 + cartonAncho / 2, tituloY, { align: 'center' });
-
-                    // --- Encabezados B I N G O ---
-                    const headerTop = y0 + ladoCelda * 2.0;
-                    const headerH = ladoCelda * 0.95;
+                    // --- Encabezados B I N G O (filas oscuras con letras blancas) ---
                     for (let i = 0; i < 5; i++) {
-                        const cxHeader = x0 + i * ladoCelda + ladoCelda / 2;
+                        const cx = x0 + i * ladoCelda;
+                        const cy = y0 + headerAlto;
 
-                        // Fondo del encabezado con color pastel de la columna
-                        doc.setFillColor(coloresCol[i][0], coloresCol[i][1], coloresCol[i][2]);
-                        doc.roundedRect(x0 + i * ladoCelda, headerTop - headerH, ladoCelda, headerH, 2, 2, 'F');
+                        // Fondo oscuro del header
+                        doc.setFillColor(colorHeader.r, colorHeader.g, colorHeader.b);
+                        doc.roundedRect(cx + 0.5, y0 + 0.5, ladoCelda - 1, headerAlto - 1, 3, 3, 'F');
 
-                        // Letra centrada vertical y horizontalmente
-                        const letraY = headerTop - headerH / 2 + 1.2;
+                        // Letra centrada
+                        const letraY = y0 + headerAlto / 2 + 1.5;
                         doc.setFont('helvetica', 'bold');
-                        doc.setFontSize(14);
-                        doc.setTextColor(colorHeader.r, colorHeader.g, colorHeader.b);
-                        doc.text(LETRAS_ORDEN[i], x0 + i * ladoCelda + ladoCelda / 2, letraY, { align: 'center' });
+                        doc.setFontSize(16);
+                        doc.setTextColor(colorTextoHeader.r, colorTextoHeader.g, colorTextoHeader.b);
+                        doc.text(LETRAS_ORDEN[i], cx + ladoCelda / 2, letraY, { align: 'center' });
                     }
 
-                    // --- Filas de números ---
-                    const numStartY = headerTop - headerH;
+                    // --- Filas de números (celdas blancas con borde) ---
+                    const numStartY = y0 + headerAlto;
                     for (let fila = 0; fila < 5; fila++) {
                         for (let col = 0; col < 5; col++) {
                             const cx = x0 + col * ladoCelda + ladoCelda / 2;
-                            const cy = numStartY + fila * ladoCelda + ladoCelda * 0.475;
+                            const cy = numStartY + fila * ladoCelda + ladoCelda * 0.47;
 
-                            // Fondo con color pastel de la columna
-                            doc.setFillColor(coloresCol[col][0], coloresCol[col][1], coloresCol[col][2]);
-                            doc.rect(x0 + col * ladoCelda, numStartY + fila * ladoCelda - ladoCelda * 0.525, ladoCelda, ladoCelda, 'F');
+                            // Fondo blanco de la celda con bordes redondeados
+                            doc.setFillColor(255, 255, 255);
+                            doc.roundedRect(
+                                x0 + col * ladoCelda + 0.8,
+                                numStartY + fila * ladoCelda + 0.8,
+                                ladoCelda - 1.6,
+                                ladoCelda - 1.6,
+                                3, 3, 'F'
+                            );
 
-                            // Borde de celda
-                            doc.setDrawColor(180, 190, 210);
+                            // Borde de la celda
+                            doc.setDrawColor(colorBorde.r, colorBorde.g, colorBorde.b);
                             doc.setLineWidth(0.3);
-                            doc.rect(x0 + col * ladoCelda, numStartY + fila * ladoCelda - ladoCelda * 0.525, ladoCelda, ladoCelda, 'S');
+                            doc.roundedRect(
+                                x0 + col * ladoCelda + 0.8,
+                                numStartY + fila * ladoCelda + 0.8,
+                                ladoCelda - 1.6,
+                                ladoCelda - 1.6,
+                                3, 3, 'S'
+                            );
 
                             // Número centrado perfectamente
                             doc.setFont('helvetica', 'bold');
-                            doc.setFontSize(16);
-                            doc.setTextColor(24, 32, 48);
+                            doc.setFontSize(17);
+                            doc.setTextColor(colorTextoNumero.r, colorTextoNumero.g, colorTextoNumero.b);
                             doc.text(String(carton[fila][col]), cx, cy, { align: 'center' });
                         }
                     }
 
-                    // --- Decoracion inferior: numero de cartón ---
-                    const decoY = y0 + cartonAlto - ladoCelda * 0.35;
+                    // --- ID del cartón (pequeño, abajo) ---
+                    const decoY = y0 + cartonAlto - 3;
                     doc.setFont('helvetica', 'normal');
-                    doc.setFontSize(7);
-                    doc.setTextColor(150, 160, 180);
+                    doc.setFontSize(6);
+                    doc.setTextColor(170, 180, 200);
                     const numCarton = String(Math.floor(Math.random() * 900000) + 100000).substring(0, 6);
                     doc.text(`ID: ${numCarton}`, x0 + cartonAncho / 2, decoY, { align: 'center' });
                 }
