@@ -468,26 +468,37 @@
             const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
             const pageW = 210;
             const pageH = 297;
-            const margen = 12;
+            const margen = 10;
+            const espacioEntre = 8;
 
             // Grid 2x2 de cartones
             const cartonesPorFila = 2;
-            const espacioEntre = 6;
             const anchoDisponible = pageW - 2 * margen;
             const altoDisponible = pageH - 2 * margen;
-            const cartonAncho = (anchoDisponible - espacioEntre) / cartonesPorFila;
-            const cartonAlto = cartonAncho * 1.35; // proporcion titulo+header+5filas
-            const pasoX = (anchoDisponible - cartonAncho) / (cartonesPorFila - 1);
-            const pasoY = (altoDisponible - cartonAlto) / (cartonesPorFila - 1);
 
-            // Calculo de celda cuadrada dentro del cartón
-            // Header ocupa ~15% alto, cada fila numerica ~17%
-            const ladoCelda = cartonAncho / 6.2;
-            const headerAlto = ladoCelda * 1.05;
+            // Cada carton ocupa la mitad del ancho (con espacio entre ellos)
+            const cartonAncho = (anchoDisponible - espacioEntre) / cartonesPorFila;
+            // El alto del cartón se define por la cantidad de celdas que cabe
+            // Queremos celdas cuadradas: 6.2 celdas de ancho = header + 5 columnas
+            const ladoCelda = cartonAncho / 6.0;
+
+            // Alto total del cartón: header(1.1 celdas) + 5 filas de numeros(5 celdas) + padding(0.8 celdas)
+            const cartonAlto = ladoCelda * (1.1 + 5 + 0.8);
+
+            // Verificar que quepan verticalmente
+            const espacioVerticalNecesario = 2 * cartonAlto + espacioEntre;
+            if (espacioVerticalNecesario > altoDisponible) {
+                // Si no caben, reducir ladoCelda proporcionalmente
+                const factor = altoDisponible / espacioVerticalNecesario;
+                ladoCelda *= factor;
+            }
+
+            // Recalcular alto del cartón despues de ajuste
+            const cartonAltoAjustado = ladoCelda * (1.1 + 5 + 0.8);
 
             // Colores
-            const colorHeader = { r: 42, g: 77, b: 105 };   // azul oscuro #2a4d69
-            const colorFondoCarton = { r: 230, g: 240, b: 248 }; // #e3f8f8 suave
+            const colorHeader = { r: 42, g: 77, b: 105 };   // #2a4d69 azul oscuro
+            const colorFondoCarton = { r: 230, g: 240, b: 248 }; // #e3f0f8 suave
             const colorBorde = { r: 176, g: 196, b: 222 };       // #b0c4de
             const colorTextoHeader = { r: 255, g: 255, b: 255 };
             const colorTextoNumero = { r: 42, g: 77, b: 105 };   // azul oscuro
@@ -500,30 +511,30 @@
                     const filaGrid = Math.floor(idx / cartonesPorFila);
                     const colGrid = idx % cartonesPorFila;
 
-                    // Posicion superior-izquierda del cartón
-                    const x0 = margen + colGrid * (cartonAncho + pasoX) - pasoX / 2;
-                    const y0 = margen + filaGrid * (cartonAlto + pasoY) - pasoY / 2;
+                    // Posicion superior-izquierda del cartón (centrado en su cuadrante)
+                    const x0 = margen + colGrid * (cartonAncho + espacioEntre) - espacioEntre / 2;
+                    const y0 = margen + filaGrid * (cartonAltoAjustado + espacioEntre) - espacioEntre / 2;
 
                     // --- Fondo del cartón con bordes redondeados ---
                     doc.setFillColor(colorFondoCarton.r, colorFondoCarton.g, colorFondoCarton.b);
-                    doc.roundedRect(x0, y0, cartonAncho, cartonAlto, 6, 6, 'F');
+                    doc.roundedRect(x0, y0, cartonAncho, cartonAltoAjustado, 8, 8, 'F');
 
                     // Borde exterior redondeado
                     doc.setDrawColor(colorBorde.r, colorBorde.g, colorBorde.b);
-                    doc.setLineWidth(0.8);
-                    doc.roundedRect(x0, y0, cartonAncho, cartonAlto, 6, 6, 'S');
+                    doc.setLineWidth(1.0);
+                    doc.roundedRect(x0, y0, cartonAncho, cartonAltoAjustado, 8, 8, 'S');
 
                     // --- Encabezados B I N G O (filas oscuras con letras blancas) ---
+                    const headerAlto = ladoCelda * 1.1;
                     for (let i = 0; i < 5; i++) {
                         const cx = x0 + i * ladoCelda;
-                        const cy = y0 + headerAlto;
 
-                        // Fondo oscuro del header
+                        // Fondo oscuro del header con bordes redondeados (solo el superior)
                         doc.setFillColor(colorHeader.r, colorHeader.g, colorHeader.b);
-                        doc.roundedRect(cx + 0.5, y0 + 0.5, ladoCelda - 1, headerAlto - 1, 3, 3, 'F');
+                        doc.roundedRect(cx + 0.5, y0 + 0.5, ladoCelda - 1, headerAlto - 1, 4, 4, 'F');
 
-                        // Letra centrada
-                        const letraY = y0 + headerAlto / 2 + 1.5;
+                        // Letra centrada vertical y horizontalmente
+                        const letraY = y0 + headerAlto / 2 + 2;
                         doc.setFont('helvetica', 'bold');
                         doc.setFontSize(16);
                         doc.setTextColor(colorTextoHeader.r, colorTextoHeader.g, colorTextoHeader.b);
@@ -540,22 +551,22 @@
                             // Fondo blanco de la celda con bordes redondeados
                             doc.setFillColor(255, 255, 255);
                             doc.roundedRect(
-                                x0 + col * ladoCelda + 0.8,
-                                numStartY + fila * ladoCelda + 0.8,
-                                ladoCelda - 1.6,
-                                ladoCelda - 1.6,
-                                3, 3, 'F'
+                                x0 + col * ladoCelda + 1.0,
+                                numStartY + fila * ladoCelda + 1.0,
+                                ladoCelda - 2.0,
+                                ladoCelda - 2.0,
+                                4, 4, 'F'
                             );
 
                             // Borde de la celda
                             doc.setDrawColor(colorBorde.r, colorBorde.g, colorBorde.b);
-                            doc.setLineWidth(0.3);
+                            doc.setLineWidth(0.4);
                             doc.roundedRect(
-                                x0 + col * ladoCelda + 0.8,
-                                numStartY + fila * ladoCelda + 0.8,
-                                ladoCelda - 1.6,
-                                ladoCelda - 1.6,
-                                3, 3, 'S'
+                                x0 + col * ladoCelda + 1.0,
+                                numStartY + fila * ladoCelda + 1.0,
+                                ladoCelda - 2.0,
+                                ladoCelda - 2.0,
+                                4, 4, 'S'
                             );
 
                             // Número centrado perfectamente
@@ -567,7 +578,7 @@
                     }
 
                     // --- ID del cartón (pequeño, abajo) ---
-                    const decoY = y0 + cartonAlto - 3;
+                    const decoY = y0 + cartonAltoAjustado - 3;
                     doc.setFont('helvetica', 'normal');
                     doc.setFontSize(6);
                     doc.setTextColor(170, 180, 200);
